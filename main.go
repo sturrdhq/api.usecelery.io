@@ -1,21 +1,41 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/sturrdhq/celery-server/config"
+	"github.com/sturrdhq/celery-server/internal/api"
+	"github.com/sturrdhq/celery-server/internal/database"
+	"log"
 )
 
 func main() {
-	router := gin.Default()
+	config.SetupLogger()
 
-	router.SetTrustedProxies([]string{"localhost:3000", "usecelery.io"})
+	// set up a dabase client
+	dbClient, err := database.NewDBClient()
+	if err != nil {
+		log.Fatal("failed to create database client", err)
+	}
 
-	router.GET("/health-check", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"ok":            true,
-			"eaten veggies": true,
-		})
-	})
+	// get the client database connection
+	conn, err := dbClient.DB.DB()
+	if err != nil {
+		log.Fatal("failed to get database connection", err)
+	}
 
-	router.Run()
+	defer func() {
+		log.Println("closing database connection")
+		_ = conn.Close()
+		log.Println("database connection closed")
+	}()
+
+	// run the setup required to get the database ready
+	// migrations and other setup
+	err = dbClient.Setup()
+	if err != nil {
+		log.Fatal("failed to setup database", err)
+	}
+
+	PORT := 8000
+	log.Printf("starting server on port %d", PORT)
+	api.InitServer(PORT, dbClient)
 }
