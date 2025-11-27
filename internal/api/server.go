@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 )
 
 type Route struct {
@@ -24,6 +25,8 @@ type Server struct {
 // NewServer creates a new server with the default values
 func NewServer(port int, db *database.DBClient) *Server {
 	routerEngine := gin.Default()
+
+
 
 	return &Server{
 		port,

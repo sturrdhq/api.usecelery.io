@@ -1,23 +1,19 @@
 package api
 
 import (
-	"net/http"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func CorsMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		setCorsHeaders(c, false)
-	}
-}
-
-func setCorsHeaders(c *gin.Context, isOptions bool) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-	if isOptions {
-		c.Writer.WriteHeader(http.StatusNoContent)
-	}
+	return cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "https://usecelery.io"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	})
 }
