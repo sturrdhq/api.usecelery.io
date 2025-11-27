@@ -10,6 +10,7 @@ import (
 func main() {
 	config.SetupLogger()
 
+	log.Println("Starting server...");
 	// set up a dabase client
 	dbClient, err := database.NewDBClient()
 	if err != nil {
