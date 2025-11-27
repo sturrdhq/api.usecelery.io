@@ -4,12 +4,12 @@ import "github.com/google/uuid"
 
 type WaitList struct {
 	BaseModel
-	Subscription []Subscription `gorm:"foreignKey:WaitlistID"`
-	Name         string         `gorm:"unique"`
+	Name          string         `gorm:"unique"`
+	Subscriptions []Subscription `gorm:"foreignKey:WaitListID"`
 }
 
 type Subscription struct {
 	BaseModel
-	WaitListID uuid.UUID `json:"waitListId" redis:"waitListId"`
-	Email      string    `gorm:"email,unique"`
+	WaitListID uuid.UUID `json:"waitListId"`
+	Email      string    `gorm:"unique"`
 }
