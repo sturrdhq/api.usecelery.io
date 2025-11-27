@@ -21,7 +21,7 @@ func NewWaitListHandler(db *database.DBClient) *WaitlistHandler {
 
 func (h *WaitlistHandler) Subscribe(c *gin.Context) {
 	type subscribeParams struct {
-		Email string `json:"email" form:"email" binding:"required,email"`
+		Email string `form:"email"`
 	}
 
 	var params subscribeParams
@@ -32,13 +32,14 @@ func (h *WaitlistHandler) Subscribe(c *gin.Context) {
 
 	err := h.service.Subscribe(params.Email)
 	if err != nil {
-		slog.Error("failed to register subscription", err.Error())
-		c.JSON(http.StatusBadRequest, "Failed to register subscription")
+		slog.Error("failed to register subscription", "err", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "Failed to register subscription"})
+		return
 	}
 
 	slog.Info(
 		"Congratulations! You're in the waitlist",
 	)
 
-	c.JSON(http.StatusOK, "Congratulations! You're in the waitlist")
+	c.JSON(http.StatusOK, gin.H{"message": "Congratulations! You're in the waitlist", "error": nil})
 }

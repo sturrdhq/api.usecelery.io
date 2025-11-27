@@ -1,6 +1,8 @@
 package waitlist
 
 import (
+	"strings"
+
 	"github.com/sturrdhq/celery-server/internal/database"
 	"github.com/sturrdhq/celery-server/internal/database/models"
 )
@@ -23,13 +25,17 @@ func (as *Service) Subscribe(email string) error {
 
 	var newSubscription = models.Subscription{Email: email, WaitListID: defaultWaitlist.ID}
 
-	return as.db.Create(&newSubscription).Error
+	err = as.db.Create(&newSubscription).Error
+	if err != nil && strings.Contains(strings.ToLower(err.Error()), "duplicate") {
+		return nil
+	}
+	return err
 }
 
 func (as *Service) getDefaultWaitList() (*models.WaitList, error) {
 	const DEFAULT_WAITLIST_NAME = "USECELERY_WAITLIST"
 
-	var defaultWaitlist models.WaitList
+	var defaultWaitlist = models.WaitList{Name: DEFAULT_WAITLIST_NAME}
 
 	tx := as.db.Model(models.WaitList{}).Where("name = ?", DEFAULT_WAITLIST_NAME).FirstOrCreate(&defaultWaitlist)
 

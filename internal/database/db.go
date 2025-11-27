@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/sturrdhq/celery-server/config"
@@ -16,7 +15,7 @@ type DBClient struct {
 }
 
 func NewDBClient() (*DBClient, error) {
-	dsn := config.GetEnv("DATABSE_URL")
+	dsn := config.GetEnv("DATABASE_URL")
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 

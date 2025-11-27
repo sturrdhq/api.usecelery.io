@@ -26,7 +26,7 @@ func InitServer(p int, dbc *database.DBClient) {
 
 	waitlistHandler := handlers.NewWaitListHandler(s.db)
 
-	apiV1.PUT("/waitlist/subscribe", waitlistHandler.Subscribe)
+	apiV1.POST("/waitlist/subscribe", waitlistHandler.Subscribe)
 
 	s.Start(p)
 }
