@@ -16,14 +16,10 @@ type DBClient struct {
 }
 
 func NewDBClient() (*DBClient, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable",
-		config.GetEnv("POSTGRES_HOST"),
-		config.GetEnv("POSTGRES_USER"),
-		config.GetEnv("POSTGRES_PASSWORD"),
-		config.GetEnv("POSTGRES_DB"),
-	)
+	dsn := config.GetEnv("DATABSE_URL")
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	if err != nil {
 		return nil, err
 	}
